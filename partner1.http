@@ -1,0 +1,219 @@
+GET http://localhost:3000/events
+
+###
+# @name createEvent
+POST http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "name": "New Event",
+    "description": "This is a new event",
+    "date": "2025-07-10 15:00:00.000",
+    "price": 100
+}
+
+###
+
+@eventId = {{ createEvent.response.body.id }}
+
+###
+GET http://localhost:3000/events/{{ eventId }}
+
+###
+PATCH http://localhost:3000/events/{{ eventId }}
+Content-Type: application/json
+
+{
+    "name": "[Updated] New Event",
+    "description": "This is a new event",
+    "date": "2025-01-01T00:00:00",
+    "price": 100
+}
+
+### Create Event with empty name
+POST http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "name": "",
+    "description": "This is a new event",
+    "date": "2025-01-01T00:00:00",
+    "price": 100
+}
+
+### Creating Event with name longer than 255 characters 
+POST http://localhost:3000/events/
+Content-Type: application/json
+
+{
+    "name": "New Event aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ",
+    "description": "This is a new event",
+    "date": "2025-01-01T00:00:00",
+    "price": 100
+}
+
+### Validate Description
+POST http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "name": "Event",
+    "description": "",
+    "date": "2025-01-01T00:00:00",
+    "price": 100
+}
+
+###
+POST http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "name": "Event",
+    "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ",
+    "date": "2025-01-01T00:00:00",
+    "price": 100
+}
+
+### Validate Date
+POST http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "name": "Event",
+    "description": "This is a new event",
+    "date": "",
+    "price": 100
+}
+
+###
+POST http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "name": "Event",
+    "description": "This is a new event",
+    "date": "2025/01/01",
+    "price": 100
+}
+
+### Validate price
+POST http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "name": "New Event",
+    "description": "This is a new event",
+    "date": "2025-07-10 15:00:00.000",
+    "price": ""
+}
+
+###
+DELETE http://localhost:3000/events/{{ eventId }}
+
+###
+GET http://localhost:3000/events/{{eventId}}/spots
+
+###
+# @name createSpot
+POST http://localhost:3000/events/{{eventId}}/spots
+Content-Type: application/json
+
+{
+  "name": "A2"
+}
+
+###Validate Spot
+POST http://localhost:3000/events/{{eventId}}/spots
+Content-Type: application/json
+
+{
+  "name": ""
+}
+
+###
+POST http://localhost:3000/events/{{eventId}}/spots
+Content-Type: application/json
+
+{
+  "name": "aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa"
+}
+
+###
+@spotName = {{ createSpot.response.body.name }}
+
+###
+POST http://localhost:3000/events/{{eventId}}/reserve
+Content-Type: application/json
+X-Api-Token: 123
+
+{
+  "spots": ["{{ spotName }}"],
+  "ticket_kind": "full",
+  "email": "test@test.com"
+}
+
+###Validate Reserve
+POST http://localhost:3000/events/{{eventId}}/reserve
+Content-Type: application/json
+X-Api-Token: 123
+
+{
+  "spots": "",
+  "ticket_kind": "full",
+  "email": "test@test.com"
+}
+
+###
+POST http://localhost:3000/events/{{eventId}}/reserve
+Content-Type: application/json
+X-Api-Token: 123
+
+{
+  "spots": [],
+  "ticket_kind": "full",
+  "email": "test@test.com"
+}
+
+###
+POST http://localhost:3000/events/{{eventId}}/reserve
+Content-Type: application/json
+X-Api-Token: 123
+
+{
+  "spots": [1],
+  "ticket_kind": "full",
+  "email": "test@test.com"
+}
+
+###
+POST http://localhost:3000/events/{{eventId}}/reserve
+Content-Type: application/json
+X-Api-Token: 123
+
+{
+  "spots": ["{{ spotName }}"],
+  "ticket_kind": "new_kind",
+  "email": "test@test.com"
+}
+
+###
+POST http://localhost:3000/events/{{eventId}}/reserve
+Content-Type: application/json
+X-Api-Token: 123
+
+{
+  "spots": ["Z1"],
+  "ticket_kind": "full",
+  "email": "test@test.com"
+}
+
+###
+POST http://localhost:3000/events/{{eventId}}/reserve
+Content-Type: application/json
+X-Api-Token: 123
+
+{
+  "spots": ["{{ spotName }}"],
+  "ticket_kind": "full",
+  "email": "test@test.com"
+}
